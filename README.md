@@ -44,9 +44,7 @@ Durante esta prueba trabajarás con un conjunto de datos que simula nuestro ento
 │   │   ├── dashboard_queries.sql
 │   │   └── consultas_analiticas/
 │   └── soluciones/             # Soluciones de referencia (acceso restringido)
-├── farmatodo_de_test/          # Materiales de prueba para Ingeniero de Datos
-├── cloud_infra/                # Infraestructura como Código
-└── db_secrets/                 # Gestión de secretos de Databricks
+└── farmatodo_de_test/          # Materiales de prueba para Ingeniero de Datos
 ```
 
 ## 📚 Prerrequisitos
