@@ -1,14 +1,2326 @@
 {
+  "datasets": [
+    {
+      "name": "e951cbde",
+      "displayName": "KPIs",
+      "queryLines": [
+        "SELECT \r\n",
+        "    SUM(TOTAL_SALES_TAX) AS total_venta_trimestre,\r\n",
+        "    SUM(GROSS_MARGIN) AS total_margen_bruto,\r\n",
+        "    AVG(PERCENTAGE_GROSS_MARGIN) AS porcentaje_margen_bruto,\r\n",
+        "    SUM(TOTAL_TRANSACTIONS) AS total_transacciones\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "--Esta es la parte para los filtros requeridos (hacer el dashboard interactivo)\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Centro"
+                },
+                {
+                  "value": "Occidente"
+                },
+                {
+                  "value": "Oriente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Express"
+                },
+                {
+                  "value": "Mega"
+                },
+                {
+                  "value": "Plus"
+                },
+                {
+                  "value": "Super"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "catalog": "workspace",
+      "schema": "operations"
+    },
+    {
+      "name": "34e7cab0",
+      "displayName": "Tendencia de Ventas",
+      "queryLines": [
+        "SELECT \r\n",
+        "    BUSINESS_DATE, \r\n",
+        "    SUM(TOTAL_SALES_TAX) AS venta_diaria\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n",
+        "GROUP BY 1\r\n",
+        "ORDER BY 1;"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Centro"
+                },
+                {
+                  "value": "Occidente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Mega"
+                },
+                {
+                  "value": "Express"
+                },
+                {
+                  "value": "Plus"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3e015f6e",
+      "displayName": "Top 10 Productos",
+      "queryLines": [
+        "SELECT \r\n",
+        "    PRODUCT_DESCRIPTION, \r\n",
+        "    SUM(TOTAL_SALES_TAX) AS venta_total\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n",
+        "GROUP BY 1\r\n",
+        "ORDER BY 2 DESC\r\n",
+        "LIMIT 10;"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Oriente"
+                },
+                {
+                  "value": "Occidente"
+                },
+                {
+                  "value": "Centro"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Plus"
+                },
+                {
+                  "value": "Express"
+                },
+                {
+                  "value": "Super"
+                },
+                {
+                  "value": "Mega"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2f9b1ca2",
+      "displayName": "Desempeño por región",
+      "queryLines": [
+        "SELECT REGION_NAME, SUM(TOTAL_SALES_TAX) AS venta_total\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n",
+        "GROUP BY 1 ORDER BY 2 DESC;"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Centro"
+                },
+                {
+                  "value": "Occidente"
+                },
+                {
+                  "value": "Oriente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Plus"
+                },
+                {
+                  "value": "Mega"
+                },
+                {
+                  "value": "Super"
+                },
+                {
+                  "value": "Express"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "a2e868fc",
+      "displayName": "Desempeño por formato de tienda",
+      "queryLines": [
+        "SELECT \r\n",
+        "    FORMAT_NAME, \r\n",
+        "    SUM(TOTAL_SALES_TAX) AS venta_total,\r\n",
+        "    COUNT(DISTINCT STORE_ID) AS cantidad_tiendas\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n",
+        "GROUP BY 1 ORDER BY 2 DESC;"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Centro"
+                },
+                {
+                  "value": "Occidente"
+                },
+                {
+                  "value": "Oriente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Plus"
+                },
+                {
+                  "value": "Mega"
+                },
+                {
+                  "value": "Express"
+                },
+                {
+                  "value": "Super"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "095e4398",
+      "displayName": "Análisis de Moneda",
+      "queryLines": [
+        "SELECT \r\n",
+        "    TRUNC(BUSINESS_DATE, 'week') AS semana,\r\n",
+        "    CURRENCY_ABR,\r\n",
+        "    SUM(TOTAL_SALES_TAX) AS venta_total\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n",
+        "GROUP BY 1, 2\r\n",
+        "ORDER BY 1, 2;"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Centro"
+                },
+                {
+                  "value": "Occidente"
+                },
+                {
+                  "value": "Oriente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Plus"
+                },
+                {
+                  "value": "Mega"
+                },
+                {
+                  "value": "Super"
+                },
+                {
+                  "value": "Express"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "a7b2101a",
+      "displayName": "Análisis de Canales",
+      "queryLines": [
+        "SELECT \r\n",
+        "    CHANNEL_NAME, \r\n",
+        "    SUM(TOTAL_SALES_TAX) AS venta_total\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n",
+        "GROUP BY 1\r\n",
+        "ORDER BY 2 DESC;"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Centro"
+                },
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Occidente"
+                },
+                {
+                  "value": "Oriente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Super"
+                },
+                {
+                  "value": "Mega"
+                },
+                {
+                  "value": "Plus"
+                },
+                {
+                  "value": "Express"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "c760855a",
+      "displayName": "Top 5 Proveedores",
+      "queryLines": [
+        "SELECT \r\n",
+        "    SUPPLIER_NAME, \r\n",
+        "    SUM(TOTAL_SALES_TAX) AS venta_total\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n",
+        "GROUP BY 1\r\n",
+        "ORDER BY 2 DESC\r\n",
+        "LIMIT 5;"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Centro"
+                },
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Occidente"
+                },
+                {
+                  "value": "Oriente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Mega"
+                },
+                {
+                  "value": "Super"
+                },
+                {
+                  "value": "Plus"
+                },
+                {
+                  "value": "Express"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "e711ae4e",
+      "displayName": "Mejores Tiendas",
+      "queryLines": [
+        "SELECT \r\n",
+        "    STORE_NAME, \r\n",
+        "    CITY, \r\n",
+        "    SUM(TOTAL_SALES_TAX) AS venta_total_con_impuesto, \r\n",
+        "    SUM(GROSS_MARGIN) AS margen_bruto_total, \r\n",
+        "    AVG(PERCENTAGE_GROSS_MARGIN) AS porcentaje_margen_promedio\r\n",
+        "FROM workspace.operations.gold_sales_daily_summary\r\n",
+        "WHERE BUSINESS_DATE BETWEEN :fecha.min AND :fecha.max\r\n",
+        "  AND (array_size(:region) = 0 OR array_contains(:region, REGION_NAME))\r\n",
+        "  AND (array_size(:formato) = 0 OR array_contains(:formato, FORMAT_NAME))\r\n",
+        "GROUP BY 1, 2\r\n",
+        "ORDER BY 3 DESC\r\n",
+        "LIMIT 10;"
+      ],
+      "parameters": [
+        {
+          "displayName": "fecha",
+          "keyword": "fecha",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "2025-07-01T00:00:00.000"
+              },
+              "max": {
+                "value": "2025-09-30T00:00:00.000"
+              }
+            }
+          }
+        },
+        {
+          "displayName": "region",
+          "keyword": "region",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Capital"
+                },
+                {
+                  "value": "Centro"
+                },
+                {
+                  "value": "Occidente"
+                },
+                {
+                  "value": "Oriente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "displayName": "formato",
+          "keyword": "formato",
+          "dataType": "STRING",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "Mega"
+                },
+                {
+                  "value": "Super"
+                },
+                {
+                  "value": "Plus"
+                },
+                {
+                  "value": "Express"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
   "pages": [
     {
-      "name": "257988ca",
-      "displayName": "Untitled page",
+      "name": "f2a4ed6d",
+      "displayName": "Análisis de Ventas Q3 2025",
+      "layout": [
+        {
+          "widget": {
+            "name": "total-ventas-trimestre",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e951cbde",
+                  "fields": [
+                    {
+                      "name": "sum(total_venta_trimestre)",
+                      "expression": "SUM(`total_venta_trimestre`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Venta Total del Trimestre",
+                "showDescription": false,
+                "description": ""
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_venta_trimestre)",
+                  "style": {
+                    "color": {
+                      "themeColorType": "visualizationColors",
+                      "position": 3
+                    },
+                    "bold": true
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "margen-bruto-total",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e951cbde",
+                  "fields": [
+                    {
+                      "name": "sum(total_margen_bruto)",
+                      "expression": "SUM(`total_margen_bruto`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Margen Bruto Total"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_margen_bruto)",
+                  "style": {
+                    "bold": true,
+                    "color": {
+                      "themeColorType": "visualizationColors",
+                      "position": 3
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 2,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "porcentaje-margen-bruto-promedio",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e951cbde",
+                  "fields": [
+                    {
+                      "name": "avg(porcentaje_margen_bruto)",
+                      "expression": "AVG(`porcentaje_margen_bruto`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "% Margen Bruto Promedio"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(porcentaje_margen_bruto)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "style": {
+                    "bold": true
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "9b53e7ed",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:36px;line-height:1.5\">**Análisis de Ventas Farmatodo Q3 2025&#32;**</span></span>\n",
+                "\n",
+                "<span style=\"text-align:center;display:block\">Dashboard con información proveniente de la tabla analítica gold\\_sales\\_daily\\_summary. Los montos están en VES.</span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total-transacciones",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e951cbde",
+                  "fields": [
+                    {
+                      "name": "sum(total_transacciones)",
+                      "expression": "SUM(`total_transacciones`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total de Transacciones"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_transacciones)",
+                  "style": {
+                    "bold": true
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "ventas-diarias-trimestre",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "34e7cab0",
+                  "fields": [
+                    {
+                      "name": "BUSINESS_DATE",
+                      "expression": "`BUSINESS_DATE`"
+                    },
+                    {
+                      "name": "sum(venta_diaria)",
+                      "expression": "SUM(`venta_diaria`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Ventas diarias a lo largo del trimestre\n"
+              },
+              "mark": {
+                "colors": [
+                  "#079D96",
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "BUSINESS_DATE",
+                  "displayName": "Fecha",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(venta_diaria)",
+                  "displayName": "Ventas diarias",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "top-10-productos-mas-ventas",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3e015f6e",
+                  "fields": [
+                    {
+                      "name": "sum(venta_total)",
+                      "expression": "SUM(`venta_total`)"
+                    },
+                    {
+                      "name": "PRODUCT_DESCRIPTION",
+                      "expression": "`PRODUCT_DESCRIPTION`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Top 10 Productos con más ventas",
+                "showDescription": false,
+                "description": ""
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "sum(venta_total)",
+                  "displayName": "Venta Total",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "PRODUCT_DESCRIPTION",
+                  "displayName": "Producto",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                },
+                "color": {
+                  "fieldName": "sum(venta_total)",
+                  "displayName": "Venta Total",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "greenblue"
+                    }
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 15,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "desempeno-por-region",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2f9b1ca2",
+                  "fields": [
+                    {
+                      "name": "REGION_NAME",
+                      "expression": "`REGION_NAME`"
+                    },
+                    {
+                      "name": "sum(venta_total)",
+                      "expression": "SUM(`venta_total`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Desempeño por región"
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "selectionColor"
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "REGION_NAME",
+                  "displayName": "Región",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(venta_total)",
+                  "displayName": "Venta Total",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 21,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "desempeno-formato-tienda",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a2e868fc",
+                  "fields": [
+                    {
+                      "name": "FORMAT_NAME",
+                      "expression": "`FORMAT_NAME`"
+                    },
+                    {
+                      "name": "sum(cantidad_tiendas)",
+                      "expression": "SUM(`cantidad_tiendas`)"
+                    },
+                    {
+                      "name": "sum(venta_total)",
+                      "expression": "SUM(`venta_total`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Desempeño por formato de tienda"
+              },
+              "mark": {
+                "colors": [
+                  "#8BB9E7",
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ],
+                "layout": "stack"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "FORMAT_NAME",
+                  "displayName": "Formato de Tienda",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(venta_total)",
+                  "displayName": "Ventas por formato de tienda",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "FORMAT_NAME",
+                  "displayName": "Formato de Tienda",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": "Mega",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 5
+                        }
+                      },
+                      {
+                        "value": "Plus",
+                        "color": "#407AB6"
+                      },
+                      {
+                        "value": "Super",
+                        "color": "#21CAFF"
+                      }
+                    ]
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "sum(cantidad_tiendas)",
+                    "displayName": "Cantidad de tiendas por formato"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 21,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "analisis-de-moneda",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "095e4398",
+                  "fields": [
+                    {
+                      "name": "semana",
+                      "expression": "`semana`"
+                    },
+                    {
+                      "name": "CURRENCY_ABR",
+                      "expression": "`CURRENCY_ABR`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Análisis de Moneda"
+              },
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "semana",
+                  "displayName": "Semana",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "CURRENCY_ABR",
+                  "displayName": "Moneda",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 27,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "analisis-de-canales",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a7b2101a",
+                  "fields": [
+                    {
+                      "name": "count(CHANNEL_NAME)",
+                      "expression": "COUNT(`CHANNEL_NAME`)"
+                    },
+                    {
+                      "name": "venta_total",
+                      "expression": "`venta_total`"
+                    },
+                    {
+                      "name": "CHANNEL_NAME",
+                      "expression": "`CHANNEL_NAME`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Análisis de Canales"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(CHANNEL_NAME)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Canal"
+                },
+                "color": {
+                  "fieldName": "venta_total",
+                  "displayName": "Venta",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "blues"
+                    }
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "CHANNEL_NAME",
+                    "displayName": "Tipo de Canal"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 27,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "top-5-proveedores",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c760855a",
+                  "fields": [
+                    {
+                      "name": "sum(venta_total)",
+                      "expression": "SUM(`venta_total`)"
+                    },
+                    {
+                      "name": "SUPPLIER_NAME",
+                      "expression": "`SUPPLIER_NAME`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Top 5 Proveedores",
+                "showDescription": false
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "sum(venta_total)",
+                  "displayName": "Venta Total",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "SUPPLIER_NAME",
+                  "displayName": "Proveedor",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                },
+                "color": {
+                  "fieldName": "sum(venta_total)",
+                  "displayName": "Venta",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 4,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "tabla-mejores-tiendas",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e711ae4e",
+                  "fields": [
+                    {
+                      "name": "STORE_NAME",
+                      "expression": "`STORE_NAME`"
+                    },
+                    {
+                      "name": "CITY",
+                      "expression": "`CITY`"
+                    },
+                    {
+                      "name": "venta_total_con_impuesto",
+                      "expression": "`venta_total_con_impuesto`"
+                    },
+                    {
+                      "name": "margen_bruto_total",
+                      "expression": "`margen_bruto_total`"
+                    },
+                    {
+                      "name": "porcentaje_margen_promedio",
+                      "expression": "`porcentaje_margen_promedio`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": true,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Tabla de Mejores Tiendas",
+                "showDescription": true,
+                "description": "Tabla con las 10 mejores tiendas de Farmatodo  con respecto a ventas"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "STORE_NAME",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100000,
+                    "title": "Nombre de tienda",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "cellFormat": {
+                      "default": {
+                        "foregroundColor": null
+                      },
+                      "rules": []
+                    }
+                  },
+                  {
+                    "fieldName": "CITY",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "Ciudad",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false
+                  },
+                  {
+                    "fieldName": "venta_total_con_impuesto",
+                    "numberFormat": "0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "float",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100002,
+                    "title": "Venta Total con Impuesto",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false
+                  },
+                  {
+                    "fieldName": "margen_bruto_total",
+                    "numberFormat": "0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "float",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100003,
+                    "title": "Margen Bruto Total",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false
+                  },
+                  {
+                    "fieldName": "porcentaje_margen_promedio",
+                    "numberFormat": "0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "float",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100004,
+                    "title": "% Margen Promedio",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
       "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "2739e900",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "rango-de-fechas",
+            "queries": [
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1050f8c931365a454f45514f67645_fecha",
+                "query": {
+                  "datasetName": "e951cbde",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051005bb10309bf3ab9f96132add_fecha",
+                "query": {
+                  "datasetName": "34e7cab0",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10512c8c01905b7f23c1abda20a24_fecha",
+                "query": {
+                  "datasetName": "3e015f6e",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513b12911908692f84206dfedf5_fecha",
+                "query": {
+                  "datasetName": "2f9b1ca2",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513d5131bac9c54f044e5f6da7e_fecha",
+                "query": {
+                  "datasetName": "a2e868fc",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051596da1e07a43fea5dcce7565e_fecha",
+                "query": {
+                  "datasetName": "095e4398",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10516d6c410adb8a736c9158cb0d8_fecha",
+                "query": {
+                  "datasetName": "a7b2101a",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f105177c4016e3a4b8073577a76907_fecha",
+                "query": {
+                  "datasetName": "c760855a",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051827d4167faa47788e991ab66a_fecha",
+                "query": {
+                  "datasetName": "e711ae4e",
+                  "parameters": [
+                    {
+                      "name": "fecha",
+                      "keyword": "fecha"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Rango de fechas"
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1050f8c931365a454f45514f67645_fecha"
+                  },
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051005bb10309bf3ab9f96132add_fecha"
+                  },
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10512c8c01905b7f23c1abda20a24_fecha"
+                  },
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513b12911908692f84206dfedf5_fecha"
+                  },
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513d5131bac9c54f044e5f6da7e_fecha"
+                  },
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051596da1e07a43fea5dcce7565e_fecha"
+                  },
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10516d6c410adb8a736c9158cb0d8_fecha"
+                  },
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f105177c4016e3a4b8073577a76907_fecha"
+                  },
+                  {
+                    "parameterName": "fecha",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051827d4167faa47788e991ab66a_fecha"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "region",
+            "queries": [
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1050f8c931365a454f45514f67645_region",
+                "query": {
+                  "datasetName": "e951cbde",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051005bb10309bf3ab9f96132add_region",
+                "query": {
+                  "datasetName": "34e7cab0",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10512c8c01905b7f23c1abda20a24_region",
+                "query": {
+                  "datasetName": "3e015f6e",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513b12911908692f84206dfedf5_region",
+                "query": {
+                  "datasetName": "2f9b1ca2",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513d5131bac9c54f044e5f6da7e_region",
+                "query": {
+                  "datasetName": "a2e868fc",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051596da1e07a43fea5dcce7565e_region",
+                "query": {
+                  "datasetName": "095e4398",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10516d6c410adb8a736c9158cb0d8_region",
+                "query": {
+                  "datasetName": "a7b2101a",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f105177c4016e3a4b8073577a76907_region",
+                "query": {
+                  "datasetName": "c760855a",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051827d4167faa47788e991ab66a_region",
+                "query": {
+                  "datasetName": "e711ae4e",
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "keyword": "region"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Region",
+                "showDescription": true,
+                "description": "Filtrar por las diferentes regiones"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1050f8c931365a454f45514f67645_region"
+                  },
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051005bb10309bf3ab9f96132add_region"
+                  },
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10512c8c01905b7f23c1abda20a24_region"
+                  },
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513b12911908692f84206dfedf5_region"
+                  },
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513d5131bac9c54f044e5f6da7e_region"
+                  },
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051596da1e07a43fea5dcce7565e_region"
+                  },
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10516d6c410adb8a736c9158cb0d8_region"
+                  },
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f105177c4016e3a4b8073577a76907_region"
+                  },
+                  {
+                    "parameterName": "region",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051827d4167faa47788e991ab66a_region"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "formato",
+            "queries": [
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1050f8c931365a454f45514f67645_formato",
+                "query": {
+                  "datasetName": "e951cbde",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051005bb10309bf3ab9f96132add_formato",
+                "query": {
+                  "datasetName": "34e7cab0",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10512c8c01905b7f23c1abda20a24_formato",
+                "query": {
+                  "datasetName": "3e015f6e",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513b12911908692f84206dfedf5_formato",
+                "query": {
+                  "datasetName": "2f9b1ca2",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513d5131bac9c54f044e5f6da7e_formato",
+                "query": {
+                  "datasetName": "a2e868fc",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051596da1e07a43fea5dcce7565e_formato",
+                "query": {
+                  "datasetName": "095e4398",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10516d6c410adb8a736c9158cb0d8_formato",
+                "query": {
+                  "datasetName": "a7b2101a",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f105177c4016e3a4b8073577a76907_formato",
+                "query": {
+                  "datasetName": "c760855a",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051827d4167faa47788e991ab66a_formato",
+                "query": {
+                  "datasetName": "e711ae4e",
+                  "parameters": [
+                    {
+                      "name": "formato",
+                      "keyword": "formato"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Formato",
+                "showDescription": true,
+                "description": "Filtrar por los formatos de tienda"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1050f8c931365a454f45514f67645_formato"
+                  },
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051005bb10309bf3ab9f96132add_formato"
+                  },
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10512c8c01905b7f23c1abda20a24_formato"
+                  },
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513b12911908692f84206dfedf5_formato"
+                  },
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10513d5131bac9c54f044e5f6da7e_formato"
+                  },
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051596da1e07a43fea5dcce7565e_formato"
+                  },
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f10516d6c410adb8a736c9158cb0d8_formato"
+                  },
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f105177c4016e3a4b8073577a76907_formato"
+                  },
+                  {
+                    "parameterName": "formato",
+                    "queryName": "parameter_dashboards/01f1050f18961ece90aea449810b7fb8/datasets/01f1051827d4167faa47788e991ab66a_formato"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS"
     }
   ],
   "uiSettings": {
     "theme": {
       "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
-    }
+    },
+    "applyModeEnabled": false
   }
 }
